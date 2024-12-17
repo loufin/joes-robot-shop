@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { IProduct } from './product.model';
-import { CartService } from '../cart.service';
+import { CartService } from '../cart/cart.service';
 import { ProductService } from './product.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-catalog',
@@ -14,6 +15,8 @@ export class CatalogComponent {
 
   constructor(
     private cartSvc: CartService, 
+    private router: Router,
+    private route: ActivatedRoute,
     private productSvc : ProductService) {
     this.products  = [
       {
@@ -197,6 +200,10 @@ export class CatalogComponent {
     this.productSvc.getProducts().subscribe(products => {
       this.products = products;  
     })
+    // this.filter = this.route.snapshot.params['filter']; this takes an initial value only 
+    this.route.params.subscribe((params) => {
+      this.filter = params['filter'];
+    })
   }
   getFilteredProducts() {
     return this.filter === ''
@@ -211,5 +218,6 @@ export class CatalogComponent {
   
   addToCart(product: IProduct) {
     this.cartSvc.add(product);
+    this.router.navigate(['/cart']);
   }
 }
