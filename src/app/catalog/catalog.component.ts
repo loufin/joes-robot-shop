@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IProduct } from './product.model';
 import { CartService } from '../cart.service';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'app-catalog',
@@ -11,7 +12,9 @@ export class CatalogComponent {
   products: IProduct[];
   filter : string = '';
 
-  constructor(private cartSvc: CartService) {
+  constructor(
+    private cartSvc: CartService, 
+    private productSvc : ProductService) {
     this.products  = [
       {
         id: 1,
@@ -187,8 +190,14 @@ export class CatalogComponent {
         discount: 0,
       },
     ];
-  }
 
+
+  }
+  ngOnInit() {
+    this.productSvc.getProducts().subscribe(products => {
+      this.products = products;  
+    })
+  }
   getFilteredProducts() {
     return this.filter === ''
       ? this.products
